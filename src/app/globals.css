@@ -491,6 +491,13 @@ a {
   font-size: 0.88rem;
 }
 
+.result__hint {
+  margin: 0.35rem 0 0;
+  color: var(--teal);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
 .result__options {
   list-style: none;
   margin: 0;

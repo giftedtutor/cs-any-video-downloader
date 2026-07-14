@@ -52,7 +52,7 @@ For Google AdSense review this site includes:
 - `/terms` — Terms of Service (+ DMCA)
 - `/cookies` — Cookie Policy
 - `/about` — About us
-- `/contact` — Support at **codesplitters@gmail.com**
+- `/contact` — Support at **thecodesplitters@gmail.com**
 - `/ads.txt` — replace the placeholder publisher ID after AdSense approval
 - Cookie consent banner on first visit
 

@@ -1,4 +1,5 @@
 import { detectPlatform } from "../platforms";
+import { withSortedOptions } from "../quality";
 import type { MediaResult, PlatformId } from "../types";
 import { downloadWithCobalt } from "./cobalt";
 import { downloadWithFacebook } from "./facebook";
@@ -24,8 +25,8 @@ function cobaltProvider(mode: "auto" | "audio" = "auto"): ProviderFn {
 const PLATFORM_CHAIN: Partial<Record<PlatformId, ProviderFn[]>> = {
   tiktok: [withPlatform(downloadWithTikwm), cobaltProvider()],
   twitter: [withPlatform(downloadWithFxTwitter), cobaltProvider()],
-  facebook: [withPlatform(downloadWithFacebook), cobaltProvider()],
-  instagram: [withPlatform(downloadWithInstagramEmbed), cobaltProvider()],
+  facebook: [cobaltProvider(), withPlatform(downloadWithFacebook)],
+  instagram: [cobaltProvider(), withPlatform(downloadWithInstagramEmbed)],
   youtube: [cobaltProvider()],
   reddit: [cobaltProvider()],
   vimeo: [cobaltProvider()],
@@ -52,12 +53,17 @@ async function tryProviders(
       if (result.platform === "unknown") {
         result.platform = platform;
       }
-      return result;
+      return withSortedOptions({
+        ...result,
+        provider: "cs-downloader",
+      });
     } catch (err) {
       errors.push(err instanceof Error ? err.message : "Provider failed");
     }
   }
-  throw new ProviderError(errors[errors.length - 1] || "All providers failed.");
+  throw new ProviderError(
+    errors[errors.length - 1] || "Could not resolve downloads for this link.",
+  );
 }
 
 async function enrichYouTube(
@@ -89,7 +95,10 @@ export async function resolveMedia(url: string): Promise<MediaResult> {
       const rapid = await downloadWithRapidApi(url);
       if (rapid) {
         if (rapid.platform === "unknown") rapid.platform = platform;
-        return enrichYouTube(url, rapid);
+        return enrichYouTube(
+          url,
+          withSortedOptions({ ...rapid, provider: "cs-downloader" }),
+        );
       }
     } catch {
       // ignore
@@ -97,7 +106,10 @@ export async function resolveMedia(url: string): Promise<MediaResult> {
 
     if (platform !== "unknown") {
       try {
-        return enrichYouTube(url, await downloadWithCobalt(url, platform));
+        return enrichYouTube(
+          url,
+          withSortedOptions(await downloadWithCobalt(url, platform)),
+        );
       } catch {
         // fall through
       }
@@ -109,37 +121,32 @@ export async function resolveMedia(url: string): Promise<MediaResult> {
   }
 }
 
-export function getProviderSummary() {
+/** User-facing highlights (no internal service names). */
+export function getFeatureHighlights() {
   return [
     {
-      name: "TikWM",
-      platforms: ["TikTok"],
-      note: "Free public API · ~1 request/second",
+      name: "Quality choices",
+      detail: "Pick from lower to higher resolution when the source offers them.",
     },
     {
-      name: "FxTwitter / VxTwitter",
-      platforms: ["X (Twitter)"],
-      note: "Free public tweet media API",
+      name: "Major platforms",
+      detail: "YouTube, TikTok, Instagram, Facebook, X, Reddit, Vimeo, and more.",
     },
     {
-      name: "Facebook Video Plugin",
-      platforms: ["Facebook"],
-      note: "Public plugin scrape for SD/HD",
+      name: "No watermark TikTok",
+      detail: "HD options prefer clean streams whenever they’re available.",
     },
     {
-      name: "Instagram Embed",
-      platforms: ["Instagram"],
-      note: "Public embed page extraction",
+      name: "Works on mobile",
+      detail: "Paste a link on your phone or desktop — no app install needed.",
     },
     {
-      name: "Cobalt (community + self-host)",
-      platforms: ["YouTube", "Reddit", "Vimeo", "1000+ sites"],
-      note: "Live directory fallbacks · set COBALT_API_URL for best results",
+      name: "Private by design",
+      detail: "We don’t keep your videos. See Privacy for how downloads work.",
     },
     {
-      name: "RapidAPI (optional)",
-      platforms: ["Multi-platform backups"],
-      note: "Uses RAPIDAPI_KEY free quota when set",
+      name: "Friendly support",
+      detail: "Reach us anytime for help, privacy, or copyright questions.",
     },
   ];
 }

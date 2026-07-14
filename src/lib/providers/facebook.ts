@@ -1,3 +1,4 @@
+import { withSortedOptions } from "../quality";
 import type { DownloadOption, MediaResult } from "../types";
 import {
   buildResult,
@@ -74,9 +75,11 @@ export async function downloadWithFacebook(url: string): Promise<MediaResult> {
     });
   };
 
-  hd.forEach((u, i) => pushUnique(`fb-hd-${i}`, "HD video", "HD", u));
-  playable.forEach((u, i) => pushUnique(`fb-play-${i}`, "Playable video", "auto", u));
-  sd.forEach((u, i) => pushUnique(`fb-sd-${i}`, "SD video", "SD", u));
+  hd.forEach((u, i) => pushUnique(`fb-hd-${i}`, "HD · higher quality", "1080", u));
+  playable.forEach((u, i) =>
+    pushUnique(`fb-play-${i}`, "Standard quality", "720", u),
+  );
+  sd.forEach((u, i) => pushUnique(`fb-sd-${i}`, "Low quality", "360", u));
 
   if (!options.length) {
     // Fallback: try the raw page
@@ -88,16 +91,20 @@ export async function downloadWithFacebook(url: string): Promise<MediaResult> {
     const pageHtml = await pageRes.text();
     const pageHd = collectUrls(pageHtml, [/"browser_native_hd_url"\s*:\s*"([^"]+)"/]);
     const pageSd = collectUrls(pageHtml, [/"browser_native_sd_url"\s*:\s*"([^"]+)"/]);
-    pageHd.forEach((u, i) => pushUnique(`fb-page-hd-${i}`, "HD video", "HD", u));
-    pageSd.forEach((u, i) => pushUnique(`fb-page-sd-${i}`, "SD video", "SD", u));
+    pageHd.forEach((u, i) =>
+      pushUnique(`fb-page-hd-${i}`, "HD · higher quality", "1080", u),
+    );
+    pageSd.forEach((u, i) => pushUnique(`fb-page-sd-${i}`, "Low quality", "360", u));
   }
 
-  return buildResult({
-    platform: "facebook",
-    title: title.slice(0, 140),
-    thumbnail: thumbnail || undefined,
-    options,
-    provider: "facebook-plugin",
-    sourceUrl: url,
-  });
+  return withSortedOptions(
+    buildResult({
+      platform: "facebook",
+      title: title.slice(0, 140),
+      thumbnail: thumbnail || undefined,
+      options,
+      provider: "cs-downloader",
+      sourceUrl: url,
+    }),
+  );
 }

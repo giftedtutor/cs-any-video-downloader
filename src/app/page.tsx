@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DownloaderFormSuspense as DownloaderForm } from "@/components/downloader-form-suspense";
 import { JsonLd } from "@/components/json-ld";
 import { FaqSection, HowSection, PlatformSection } from "@/components/sections";
-import { getProviderSummary } from "@/lib/providers";
+import { getFeatureHighlights } from "@/lib/providers";
 import {
   buildMetadata,
   jsonLdFaq,
@@ -25,7 +25,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function HomePage() {
-  const providers = getProviderSummary();
+  const features = getFeatureHighlights();
 
   return (
     <main id="main-content">
@@ -45,7 +45,7 @@ export default function HomePage() {
         <h1 className="hero__brand">{siteConfig.name}</h1>
         <p className="hero__lead">
           Free multi-platform video downloader for YouTube, TikTok, Instagram,
-          Facebook, X, and more — elegant, fast, and powered by open free APIs.
+          Facebook, X, and more — paste a link, pick a quality, and save.
         </p>
         <DownloaderForm />
         <p className="hero__cta-note">
@@ -56,21 +56,19 @@ export default function HomePage() {
       <PlatformSection />
       <HowSection />
 
-      <section className="section providers" id="providers">
+      <section className="section providers" id="features">
         <div className="section__intro">
-          <h2>Free APIs under the hood</h2>
+          <h2>Built for quick saves</h2>
           <p>
-            CS Any Video Downloader chains free endpoints and open instances so
-            downloads keep working when one provider hits a quota.
+            Simple tools for everyday downloads — choose quality, skip the
+            account, and get the file onto your device.
           </p>
         </div>
         <ul className="provider-grid">
-          {providers.map((provider) => (
-            <li key={provider.name} className="provider-card">
-              <h3>{provider.name}</h3>
-              <p>
-                {provider.platforms.join(", ")} — {provider.note}
-              </p>
+          {features.map((feature) => (
+            <li key={feature.name} className="provider-card">
+              <h3>{feature.name}</h3>
+              <p>{feature.detail}</p>
             </li>
           ))}
         </ul>

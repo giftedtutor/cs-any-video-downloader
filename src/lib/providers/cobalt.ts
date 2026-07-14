@@ -1,4 +1,8 @@
 import type { DownloadOption, MediaResult, PlatformId } from "../types";
+import {
+  labelForQuality,
+  withSortedOptions,
+} from "../quality";
 import { buildResult, fetchWithTimeout, ProviderError } from "./utils";
 
 interface CobaltTunnel {
@@ -20,6 +24,8 @@ interface CobaltError {
 }
 
 type CobaltResponse = CobaltTunnel | CobaltPicker | CobaltError | { status: string };
+
+const VIDEO_QUALITIES = ["360", "480", "720", "1080", "1440"] as const;
 
 /** Prefer community instances known to work for YouTube without Turnstile when possible. */
 const BUILTIN_INSTANCES = [
@@ -81,6 +87,7 @@ async function callInstance(
   baseUrl: string,
   url: string,
   downloadMode: "auto" | "audio" = "auto",
+  videoQuality = "720",
 ): Promise<CobaltResponse> {
   const headers: Record<string, string> = {
     Accept: "application/json",
@@ -98,7 +105,7 @@ async function callInstance(
       headers,
       body: JSON.stringify({
         url,
-        videoQuality: "1080",
+        videoQuality,
         filenameStyle: "pretty",
         downloadMode,
         alwaysProxy: false,
@@ -108,50 +115,54 @@ async function callInstance(
   );
 
   if (!res.ok) {
-    // Auth-gated community mirrors often return 401/403/400
-    throw new ProviderError(`Cobalt HTTP ${res.status}`);
+    throw new ProviderError(`Upstream HTTP ${res.status}`);
   }
   return (await res.json()) as CobaltResponse;
+}
+
+function mapTunnelOption(
+  data: CobaltTunnel,
+  quality: string,
+): DownloadOption {
+  const filename = data.filename || "media.mp4";
+  const isAudio = /\.(mp3|m4a|ogg|opus|wav)$/i.test(filename);
+  return {
+    id: `media-${quality}-${isAudio ? "audio" : "video"}`,
+    label: labelForQuality(quality, isAudio),
+    quality: isAudio ? "audio" : quality,
+    format: isAudio ? filename.split(".").pop() || "mp3" : "mp4",
+    kind: isAudio ? "audio" : "video",
+    url: data.url,
+    proxied: true,
+  };
 }
 
 function mapResponse(
   data: CobaltResponse,
   platform: PlatformId,
   sourceUrl: string,
-  instance: string,
+  quality: string,
 ): MediaResult {
   if (data.status === "error") {
-    const code = (data as CobaltError).error?.code ?? "unknown";
-    throw new ProviderError(`Cobalt error: ${code}`);
+    throw new ProviderError("Media unavailable from this source.");
   }
 
   if (data.status === "tunnel" || data.status === "redirect") {
     const tunnel = data as CobaltTunnel;
     const filename = tunnel.filename || "media.mp4";
-    const isAudio = /\.(mp3|m4a|ogg|opus|wav)$/i.test(filename);
     return buildResult({
       platform,
       title: filename.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " "),
       sourceUrl,
-      provider: `cobalt:${new URL(instance).hostname}`,
-      options: [
-        {
-          id: "cobalt-primary",
-          label: isAudio ? "Audio download" : "Best quality",
-          quality: isAudio ? "audio" : "best",
-          format: isAudio ? filename.split(".").pop() || "mp3" : "mp4",
-          kind: isAudio ? "audio" : "video",
-          url: tunnel.url,
-          proxied: true,
-        },
-      ],
+      provider: "cs-downloader",
+      options: [mapTunnelOption(tunnel, quality)],
     });
   }
 
   if (data.status === "picker") {
     const picker = data as CobaltPicker;
     const options: DownloadOption[] = picker.picker.map((item, index) => ({
-      id: `cobalt-pick-${index}`,
+      id: `pick-${index}`,
       label: item.type === "photo" ? `Photo ${index + 1}` : `Clip ${index + 1}`,
       quality: item.type,
       format: item.type === "photo" ? "jpg" : "mp4",
@@ -161,7 +172,7 @@ function mapResponse(
     }));
     if (picker.audio) {
       options.push({
-        id: "cobalt-audio",
+        id: "pick-audio",
         label: "Background audio",
         quality: "audio",
         format: "mp3",
@@ -175,12 +186,12 @@ function mapResponse(
       title: "Media picker",
       thumbnail: picker.picker[0]?.thumb,
       sourceUrl,
-      provider: `cobalt:${new URL(instance).hostname}`,
+      provider: "cs-downloader",
       options,
     });
   }
 
-  throw new ProviderError(`Unsupported Cobalt status: ${data.status}`);
+  throw new ProviderError("Unsupported media response.");
 }
 
 export async function downloadWithCobalt(
@@ -188,31 +199,61 @@ export async function downloadWithCobalt(
   platform: PlatformId,
   mode: "auto" | "audio" = "auto",
 ): Promise<MediaResult> {
-  const errors: string[] = [];
   const instances = await getInstances(platform);
+  let working: string | null = null;
+  let seed: MediaResult | null = null;
 
   for (const instance of instances) {
     try {
-      const data = await callInstance(instance, url, mode);
-      return mapResponse(data, platform, url, instance);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "failed";
-      // Skip auth-walled mirrors quickly in the error summary
-      if (
-        message.includes("auth") ||
-        message.includes("jwt") ||
-        message.includes("HTTP 401") ||
-        message.includes("HTTP 403")
-      ) {
-        continue;
-      }
-      errors.push(`${new URL(instance).hostname}: ${message}`);
-      if (errors.length >= 5) break;
+      const data = await callInstance(instance, url, mode, "720");
+      seed = mapResponse(data, platform, url, "720");
+      working = instance;
+      break;
+    } catch {
+      // try next instance
     }
   }
-  throw new ProviderError(
-    errors.length
-      ? `Cobalt providers failed (${errors.slice(0, 3).join(" · ")})`
-      : "No reachable Cobalt instances. Set COBALT_API_URL to your self-hosted API.",
+
+  if (!working || !seed) {
+    throw new ProviderError("Could not resolve downloads for this link.");
+  }
+
+  // Photos/picker or audio-only: return sorted seed
+  if (
+    mode === "audio" ||
+    seed.options.some((o) => o.kind === "photo") ||
+    seed.options.every((o) => o.kind === "audio")
+  ) {
+    return withSortedOptions(seed);
+  }
+
+  const settled = await Promise.all(
+    VIDEO_QUALITIES.map(async (quality) => {
+      try {
+        const data = await callInstance(working!, url, mode, quality);
+        if (data.status !== "tunnel" && data.status !== "redirect") return null;
+        return mapTunnelOption(data as CobaltTunnel, quality);
+      } catch {
+        return null;
+      }
+    }),
   );
+
+  const byUrl = new Map<string, DownloadOption>();
+  for (const option of [...seed.options, ...settled.filter(Boolean) as DownloadOption[]]) {
+    if (!option.url) continue;
+    // Prefer keeping quality-specific ids; dedupe identical stream URLs
+    if (!byUrl.has(option.url)) byUrl.set(option.url, option);
+  }
+
+  const options = [...byUrl.values()];
+  if (!options.length) {
+    throw new ProviderError("No downloadable formats found.");
+  }
+
+  return withSortedOptions({
+    ...seed,
+    provider: "cs-downloader",
+    options,
+  });
 }

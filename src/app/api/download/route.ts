@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isValidHttpUrl } from "@/lib/platforms";
 import { resolveMedia } from "@/lib/providers";
+import { friendlyDownloadError } from "@/lib/quality";
 import type { DownloadApiResponse } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -65,11 +66,14 @@ export async function POST(request: Request) {
     const body: DownloadApiResponse = { ok: true, result };
     return NextResponse.json(body);
   } catch (err) {
-    const message =
+    const raw =
       err instanceof Error
         ? err.message
         : "Could not fetch media for this link.";
-    const body: DownloadApiResponse = { ok: false, error: message };
+    const body: DownloadApiResponse = {
+      ok: false,
+      error: friendlyDownloadError(raw),
+    };
     return NextResponse.json(body, { status: 422 });
   }
 }

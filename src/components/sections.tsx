@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PLATFORMS } from "@/lib/platforms";
+import { siteConfig } from "@/lib/seo";
 
 export function PlatformSection() {
   return (
@@ -7,8 +8,8 @@ export function PlatformSection() {
       <div className="section__intro">
         <h2>Every major platform, one paste</h2>
         <p>
-          Dedicated free providers for TikTok, Instagram, Facebook, and X — plus
-          Cobalt-powered fallbacks covering YouTube and a thousand more sites.
+          Save public videos from YouTube, TikTok, Instagram, Facebook, X, and
+          many more sites — all from one place.
         </p>
       </div>
       <ul className="platform-list">
@@ -41,13 +42,13 @@ export function HowSection() {
     },
     {
       n: "02",
-      title: "We pick the best free API",
-      body: "CS Any Video Downloader tries platform-native free endpoints first, then Cobalt community instances, then optional RapidAPI quotas.",
+      title: "We fetch available formats",
+      body: "CS Any Video Downloader looks up the public media and shows the qualities it can offer.",
     },
     {
       n: "03",
       title: "Choose quality & save",
-      body: "Preview the title, pick MP4 / MP3 / photo options, and download through a safe proxy when CDNs need it.",
+      body: "Pick from lower to higher quality when available, then download video, audio, or photos.",
     },
   ];
 
@@ -74,11 +75,11 @@ export function FaqSection() {
   const faqs = [
     {
       q: "Is it free?",
-      a: "Yes. Core downloads use free public APIs. Optional RapidAPI keys unlock extra free-tier quotas if you self-host.",
+      a: "Yes. Basic downloads are free and require no account.",
     },
     {
       q: "Why do some YouTube links fail?",
-      a: "YouTube rate-limits public scrapers. For production reliability, set COBALT_API_URL to your own Cobalt instance — instructions are in .env.example.",
+      a: "Some videos are private, geo-blocked, or temporarily unavailable. Try again later or use another public link.",
     },
     {
       q: "Do you store my videos?",
@@ -86,11 +87,15 @@ export function FaqSection() {
     },
     {
       q: "What about watermarks?",
-      a: "TikTok HD options prefer no-watermark streams via TikWM whenever available.",
+      a: "When available, TikTok HD options prefer streams without a watermark.",
+    },
+    {
+      q: "Can I choose video quality?",
+      a: "Yes. When the source offers multiple formats, options are listed from lower to higher quality so you can pick what you need.",
     },
     {
       q: "How do I contact support?",
-      a: "Email codesplitters@gmail.com for help, privacy requests, or DMCA notices. Or visit the Contact page.",
+      a: `Email ${siteConfig.supportEmail} for help, privacy requests, or DMCA notices. Or visit the Contact page.`,
     },
     {
       q: "Does it work on mobile?",

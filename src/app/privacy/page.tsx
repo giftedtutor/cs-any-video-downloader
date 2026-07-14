@@ -143,11 +143,10 @@ export default function PrivacyPage() {
 
       <h2>4. Third-party services</h2>
       <p>
-        To process download requests we may contact third-party APIs and media
-        CDNs (for example platform-specific free APIs and Cobalt instances).
-        Those services may receive the URL you submitted and standard technical
-        request headers. Their privacy practices are governed by their own
-        policies.
+        To prepare download options we may contact third-party media services
+        and content delivery networks on your behalf. Those services may receive
+        the URL you submitted and standard technical request headers. Their
+        privacy practices are governed by their own policies.
       </p>
       <p>
         Analytics or hosting providers (if used) may process usage data on our

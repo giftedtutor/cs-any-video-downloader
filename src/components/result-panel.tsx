@@ -42,10 +42,11 @@ export function ResultPanel({ result }: { result: MediaResult }) {
           <p className="result__platform">{result.platform}</p>
           <h2 className="result__title">{result.title}</h2>
           <p className="result__sub">
-            {[result.author, duration, `via ${result.provider}`]
-              .filter(Boolean)
-              .join(" · ")}
+            {[result.author, duration].filter(Boolean).join(" · ")}
           </p>
+          {result.options.length > 1 ? (
+            <p className="result__hint">Qualities listed from low to high</p>
+          ) : null}
         </div>
       </div>
 

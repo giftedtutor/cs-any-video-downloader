@@ -1,3 +1,4 @@
+import { withSortedOptions } from "../quality";
 import type { DownloadOption, MediaResult } from "../types";
 import { buildResult, fetchWithTimeout, ProviderError } from "./utils";
 
@@ -25,7 +26,7 @@ export async function downloadWithTikwm(url: string): Promise<MediaResult> {
     `https://tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`,
   ];
 
-  let lastError = "TikWM could not resolve this TikTok.";
+  let lastError = "Could not resolve this TikTok.";
   for (const endpoint of endpoints) {
     try {
       const res = await fetchWithTimeout(
@@ -41,27 +42,27 @@ export async function downloadWithTikwm(url: string): Promise<MediaResult> {
         15_000,
       );
       if (!res.ok) {
-        lastError = `TikWM HTTP ${res.status}`;
+        lastError = "Could not resolve this TikTok.";
         continue;
       }
 
       const json = (await res.json()) as TikwmResponse;
       if (json.code !== 0 || !json.data) {
-        lastError = json.msg || "TikWM could not resolve this TikTok.";
+        lastError = "Could not resolve this TikTok.";
         continue;
       }
 
       const data = json.data;
       const options: DownloadOption[] = [];
 
-      if (data.hdplay) {
+      if (data.wmplay) {
         options.push({
-          id: "tikwm-hd",
-          label: "HD · no watermark",
-          quality: "HD",
+          id: "tikwm-wm",
+          label: "Low · with watermark",
+          quality: "360",
           format: "mp4",
           kind: "video",
-          url: data.hdplay,
+          url: data.wmplay,
           proxied: true,
         });
       }
@@ -69,21 +70,21 @@ export async function downloadWithTikwm(url: string): Promise<MediaResult> {
         options.push({
           id: "tikwm-sd",
           label: "Standard · no watermark",
-          quality: "SD",
+          quality: "480",
           format: "mp4",
           kind: "video",
           url: data.play,
           proxied: true,
         });
       }
-      if (data.wmplay) {
+      if (data.hdplay) {
         options.push({
-          id: "tikwm-wm",
-          label: "With watermark",
-          quality: "wm",
+          id: "tikwm-hd",
+          label: "HD · no watermark",
+          quality: "720",
           format: "mp4",
           kind: "video",
-          url: data.wmplay,
+          url: data.hdplay,
           proxied: true,
         });
       }
@@ -112,18 +113,21 @@ export async function downloadWithTikwm(url: string): Promise<MediaResult> {
         });
       }
 
-      return buildResult({
-        platform: "tiktok",
-        title: data.title || "TikTok video",
-        author: data.author?.nickname || data.author?.unique_id,
-        thumbnail: data.cover || data.origin_cover,
-        duration: data.duration,
-        options,
-        provider: "tikwm",
-        sourceUrl: url,
-      });
+      return withSortedOptions(
+        buildResult({
+          platform: "tiktok",
+          title: data.title || "TikTok video",
+          author: data.author?.nickname || data.author?.unique_id,
+          thumbnail: data.cover || data.origin_cover,
+          duration: data.duration,
+          options,
+          provider: "cs-downloader",
+          sourceUrl: url,
+        }),
+      );
     } catch (err) {
-      lastError = err instanceof Error ? err.message : "TikWM request failed";
+      lastError =
+        err instanceof Error ? err.message : "Could not resolve this TikTok.";
     }
   }
 

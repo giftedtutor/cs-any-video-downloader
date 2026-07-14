@@ -31,8 +31,8 @@ export default function AboutPage() {
       <h2>Our mission</h2>
       <p>
         Make personal offline access simple, without accounts, installs, or
-        watermarked TikTok downloads when HD options are available. We combine
-        free public APIs and open Cobalt instances so the tool stays accessible.
+        watermarked TikTok downloads when HD options are available. Paste a
+        link, choose a quality, and save to your device.
       </p>
 
       <h2>How we keep it free</h2>

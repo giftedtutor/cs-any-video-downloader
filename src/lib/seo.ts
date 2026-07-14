@@ -9,10 +9,10 @@ export const siteConfig = {
   shortName: "CS Downloader",
   tagline: "Free multi-platform video downloader",
   description:
-    "Download videos from YouTube, TikTok, Instagram, Facebook, X, Reddit, Vimeo and more with CS Any Video Downloader. Free, fast, no watermark — powered by open free APIs.",
+    "Download videos from YouTube, TikTok, Instagram, Facebook, X, Reddit, Vimeo and more with CS Any Video Downloader. Free, fast, and private — choose quality and save to your device.",
   url: siteUrl,
   locale: "en_US",
-  supportEmail: "codesplitters@gmail.com",
+  supportEmail: "thecodesplitters@gmail.com",
   legalEntity: "CS Any Video Downloader",
   lastUpdated: "July 14, 2026",
   twitterHandle: "@thecodesplitter",
@@ -243,7 +243,7 @@ export function jsonLdWebApp() {
       "Instagram Reels download",
       "Facebook video download",
       "X Twitter video download",
-      "Multi-platform free APIs",
+      "Multiple quality options",
       "Mobile responsive downloader",
     ],
     screenshot: absoluteUrl("/opengraph-image"),
@@ -347,7 +347,7 @@ export function jsonLdFaq() {
         name: "Is CS Any Video Downloader really free?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. CS Any Video Downloader uses free public and open APIs with generous free quotas. No account is required for basic downloads.",
+          text: "Yes. CS Any Video Downloader is free to use with no account required for basic downloads.",
         },
       },
       {
@@ -355,7 +355,7 @@ export function jsonLdFaq() {
         name: "Which platforms are supported?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "YouTube, TikTok, Instagram, Facebook, X (Twitter), Reddit, Vimeo, Pinterest, SoundCloud, Twitch clips, Bluesky, Tumblr, Bilibili, Snapchat Spotlight, LinkedIn, and more via Cobalt.",
+          text: "YouTube, TikTok, Instagram, Facebook, X (Twitter), Reddit, Vimeo, Pinterest, SoundCloud, Twitch clips, Bluesky, Tumblr, Bilibili, Snapchat Spotlight, LinkedIn, and many more public video sites.",
         },
       },
       {
@@ -363,7 +363,7 @@ export function jsonLdFaq() {
         name: "Do TikTok downloads include a watermark?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "No. TikTok downloads use TikWM and prefer HD streams without watermark whenever available.",
+          text: "No. When available, TikTok HD options prefer streams without a watermark.",
         },
       },
       {
