@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CS Any Video Downloader — Free Multi-Platform Video Downloader
 
-## Getting Started
+Next.js web app to download videos from **YouTube, TikTok, Instagram, Facebook, X (Twitter), Reddit, Vimeo**, and more using free public APIs and Cobalt community instances.
 
-First, run the development server:
+## Features
+
+- Paste-a-link downloader with quality / format options
+- Platform-specific SEO pages (`/download/youtube`, `/download/tiktok`, …)
+- Multi-provider fallback chain (TikWM → FxTwitter → Instagram embed → Facebook plugin → Cobalt → optional RapidAPI)
+- Stream proxy for CDN referer/CORS issues
+- Sitemap, robots.txt, Open Graph, FAQ + WebApplication JSON-LD
+- Elegant teal / mist UI (Syne + Plus Jakarta Sans)
+
+## Quick start
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Required | Description |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Canonical site URL for SEO |
+| `COBALT_API_URL` | Recommended for YouTube | Your self-hosted [Cobalt](https://github.com/imputnet/cobalt) API |
+| `COBALT_API_KEY` | If Cobalt requires auth | `Api-Key` header value |
+| `COBALT_FALLBACK_URLS` | Optional | Comma-separated community Cobalt APIs |
+| `RAPIDAPI_KEY` | Optional | Unlocks RapidAPI free-tier backup providers |
 
-## Learn More
+## Free API stack
 
-To learn more about Next.js, take a look at the following resources:
+1. **TikWM** — TikTok HD / no watermark (~1 req/sec free)
+2. **FxTwitter / VxTwitter** — X video variants
+3. **Instagram embed** — public reels/posts
+4. **Facebook video plugin** — public SD/HD URLs
+5. **Cobalt instances** — YouTube + 1000+ sites (self-host for production)
+6. **RapidAPI** — optional free-quota backups when `RAPIDAPI_KEY` is set
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Production tip
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Community Cobalt mirrors rotate and may have Turnstile protection. For reliable YouTube downloads, deploy your own Cobalt instance and set `COBALT_API_URL`.
 
-## Deploy on Vercel
+## AdSense / legal pages
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For Google AdSense review this site includes:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `/privacy` — Privacy Policy (AdSense & cookies disclosure)
+- `/terms` — Terms of Service (+ DMCA)
+- `/cookies` — Cookie Policy
+- `/about` — About us
+- `/contact` — Support at **codesplitters@gmail.com**
+- `/ads.txt` — replace the placeholder publisher ID after AdSense approval
+- Cookie consent banner on first visit
+
+Set `NEXT_PUBLIC_ADSENSE_CLIENT=ca-pub-xxxxxxxx` in `.env.local` to load the AdSense script.
+
+Only download content you own or have permission to save. Respect platform terms and copyright law.
