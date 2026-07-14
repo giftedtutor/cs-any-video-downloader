@@ -12,9 +12,15 @@ export const metadata: Metadata = buildMetadata({
 
 export default function AboutPage() {
   const email = siteConfig.supportEmail;
+  const description = `About ${siteConfig.name} — a free multi-platform video downloader. Contact support at ${siteConfig.supportEmail}.`;
 
   return (
-    <LegalPage title={`About ${siteConfig.name}`} updated={siteConfig.lastUpdated}>
+    <LegalPage
+      title={`About ${siteConfig.name}`}
+      updated={siteConfig.lastUpdated}
+      path="/about"
+      description={description}
+    >
       <p>
         <strong>{siteConfig.name}</strong> is a free web tool that helps people
         save publicly available videos and media from popular platforms —

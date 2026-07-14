@@ -7,14 +7,21 @@ export const metadata: Metadata = buildMetadata({
   title: "Cookie Policy",
   description: `Cookie Policy for ${siteConfig.name}. How we use cookies, analytics, and Google AdSense advertising cookies.`,
   path: "/cookies",
+  type: "article",
   keywords: ["cookie policy", "cookies", "AdSense cookies"],
 });
 
 export default function CookiesPage() {
   const email = siteConfig.supportEmail;
+  const description = `Cookie Policy for ${siteConfig.name}. How we use cookies, analytics, and Google AdSense advertising cookies.`;
 
   return (
-    <LegalPage title="Cookie Policy" updated={siteConfig.lastUpdated}>
+    <LegalPage
+      title="Cookie Policy"
+      updated={siteConfig.lastUpdated}
+      path="/cookies"
+      description={description}
+    >
       <p>
         This Cookie Policy explains how <strong>{siteConfig.name}</strong> uses
         cookies and similar technologies. For broader privacy practices, see our{" "}

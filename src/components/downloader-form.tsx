@@ -1,18 +1,22 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import type { DownloadApiResponse, MediaResult } from "@/lib/types";
 import { ResultPanel } from "./result-panel";
 
 export function DownloaderForm({ initialUrl = "" }: { initialUrl?: string }) {
-  const [url, setUrl] = useState(initialUrl);
+  const searchParams = useSearchParams();
+  const queryUrl = searchParams.get("url")?.trim() || "";
+  const [url, setUrl] = useState(initialUrl || queryUrl);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MediaResult | null>(null);
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
     if (initialUrl) setUrl(initialUrl);
-  }, [initialUrl]);
+    else if (queryUrl) setUrl(queryUrl);
+  }, [initialUrl, queryUrl]);
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();

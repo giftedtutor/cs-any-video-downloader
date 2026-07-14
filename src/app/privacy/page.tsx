@@ -7,14 +7,21 @@ export const metadata: Metadata = buildMetadata({
   title: "Privacy Policy",
   description: `Privacy Policy for ${siteConfig.name}. How we collect, use, and protect your information, including ads and cookies.`,
   path: "/privacy",
+  type: "article",
   keywords: ["privacy policy", "data protection", "AdSense privacy"],
 });
 
 export default function PrivacyPage() {
   const email = siteConfig.supportEmail;
+  const description = `Privacy Policy for ${siteConfig.name}. How we collect, use, and protect your information, including ads and cookies.`;
 
   return (
-    <LegalPage title="Privacy Policy" updated={siteConfig.lastUpdated}>
+    <LegalPage
+      title="Privacy Policy"
+      updated={siteConfig.lastUpdated}
+      path="/privacy"
+      description={description}
+    >
       <p>
         This Privacy Policy explains how <strong>{siteConfig.name}</strong>{" "}
         (“we”, “us”, or “our”) collects, uses, and shares information when you

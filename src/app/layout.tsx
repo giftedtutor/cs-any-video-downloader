@@ -24,15 +24,26 @@ const jakarta = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const base = buildMetadata({
+  title: siteConfig.name,
+  description: siteConfig.description,
+  path: "/",
+});
+
 export const metadata: Metadata = {
-  ...buildMetadata({
-    title: siteConfig.name,
-    description: siteConfig.description,
-    path: "/",
-  }),
+  ...base,
   title: {
     default: `${siteConfig.name} — ${siteConfig.tagline}`,
     template: `%s | ${siteConfig.name}`,
+  },
+  // Root layout should not force homepage canonical on child routes
+  alternates: {
+    ...base.alternates,
+    canonical: undefined,
+  },
+  openGraph: {
+    ...base.openGraph,
+    url: siteConfig.url,
   },
   manifest: "/manifest.webmanifest",
 };

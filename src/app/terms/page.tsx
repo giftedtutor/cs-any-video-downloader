@@ -7,14 +7,21 @@ export const metadata: Metadata = buildMetadata({
   title: "Terms of Service",
   description: `Terms of Service for ${siteConfig.name}. Rules for using our free video downloader, acceptable use, and liability.`,
   path: "/terms",
+  type: "article",
   keywords: ["terms of service", "terms of use", "acceptable use"],
 });
 
 export default function TermsPage() {
   const email = siteConfig.supportEmail;
+  const description = `Terms of Service for ${siteConfig.name}. Rules for using our free video downloader, acceptable use, and liability.`;
 
   return (
-    <LegalPage title="Terms of Service" updated={siteConfig.lastUpdated}>
+    <LegalPage
+      title="Terms of Service"
+      updated={siteConfig.lastUpdated}
+      path="/terms"
+      description={description}
+    >
       <p>
         These Terms of Service (“Terms”) govern your access to and use of{" "}
         <strong>{siteConfig.name}</strong> (the “Service”). By using the

@@ -12,9 +12,15 @@ export const metadata: Metadata = buildMetadata({
 
 export default function ContactPage() {
   const email = siteConfig.supportEmail;
+  const description = `Contact ${siteConfig.name} support at ${siteConfig.supportEmail}. Privacy requests, DMCA, ads, and general help.`;
 
   return (
-    <LegalPage title="Contact & Support" updated={siteConfig.lastUpdated}>
+    <LegalPage
+      title="Contact & Support"
+      updated={siteConfig.lastUpdated}
+      path="/contact"
+      description={description}
+    >
       <p>
         We are happy to help with support, privacy requests, advertising
         questions, and copyright notices.

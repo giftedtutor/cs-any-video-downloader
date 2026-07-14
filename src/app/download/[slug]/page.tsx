@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DownloaderForm } from "@/components/downloader-form";
+import { DownloaderFormSuspense as DownloaderForm } from "@/components/downloader-form-suspense";
+import { JsonLd } from "@/components/json-ld";
 import { getPlatformBySlug, PLATFORMS } from "@/lib/platforms";
-import { buildMetadata, jsonLdBreadcrumb, siteConfig } from "@/lib/seo";
+import {
+  buildMetadata,
+  jsonLdBreadcrumb,
+  jsonLdHowTo,
+  jsonLdWebPage,
+  siteConfig,
+} from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -14,17 +21,20 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const platform = getPlatformBySlug(slug);
-  if (!platform) return {};
+  if (!platform) return { robots: { index: false, follow: false } };
+
+  const title = `Free ${platform.name} Video Downloader`;
   return buildMetadata({
-    title: `Free ${platform.name} Video Downloader`,
+    title,
     description: platform.description,
     path: `/download/${platform.slug}`,
     keywords: [
       `${platform.name} downloader`,
-      `download ${platform.name} video`,
+      `download ${platform.name} video free`,
       `free ${platform.name} download`,
       `${platform.name} mp4 saver`,
       `${platform.name} mobile download`,
+      `save ${platform.name} video online`,
     ],
   });
 }
@@ -34,21 +44,26 @@ export default async function PlatformDownloadPage({ params }: Props) {
   const platform = getPlatformBySlug(slug);
   if (!platform) notFound();
 
+  const path = `/download/${platform.slug}`;
+  const title = `Free ${platform.name} Video Downloader`;
   const others = PLATFORMS.filter((p) => p.id !== platform.id).slice(0, 8);
 
   return (
     <main id="main-content" className="platform-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
-            jsonLdBreadcrumb([
-              { name: "Home", path: "/" },
-              { name: `${platform.name} Downloader`, path: `/download/${platform.slug}` },
-            ]),
-          ),
-        }}
+      <JsonLd
+        data={jsonLdBreadcrumb([
+          { name: "Home", path: "/" },
+          { name: `${platform.name} Downloader`, path },
+        ])}
       />
+      <JsonLd
+        data={jsonLdWebPage({
+          title,
+          description: platform.description,
+          path,
+        })}
+      />
+      <JsonLd data={jsonLdHowTo(platform.name)} />
 
       <nav className="breadcrumbs" aria-label="Breadcrumb">
         <Link href="/">Home</Link>
@@ -75,7 +90,9 @@ export default async function PlatformDownloadPage({ params }: Props) {
           <li className="how-step">
             <span className="how-step__n">01</span>
             <h3>Copy the link</h3>
-            <p>Open {platform.name} and copy the share URL of the video or reel.</p>
+            <p>
+              Open {platform.name} and copy the share URL of the video or reel.
+            </p>
           </li>
           <li className="how-step">
             <span className="how-step__n">02</span>
@@ -85,7 +102,9 @@ export default async function PlatformDownloadPage({ params }: Props) {
           <li className="how-step">
             <span className="how-step__n">03</span>
             <h3>Save to your device</h3>
-            <p>Choose quality and save MP4, audio, or photos for offline use.</p>
+            <p>
+              Choose quality and save MP4, audio, or photos for offline use.
+            </p>
           </li>
         </ol>
       </section>
@@ -93,7 +112,9 @@ export default async function PlatformDownloadPage({ params }: Props) {
       <section className="section">
         <div className="section__intro">
           <h2>More downloaders</h2>
-          <p>Switch platforms anytime — CS Any Video Downloader covers them all.</p>
+          <p>
+            Switch platforms anytime — CS Any Video Downloader covers them all.
+          </p>
         </div>
         <ul className="platform-list">
           {others.map((item) => (

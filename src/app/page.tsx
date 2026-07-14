@@ -1,30 +1,45 @@
-import { DownloaderForm } from "@/components/downloader-form";
+import type { Metadata } from "next";
+import { DownloaderFormSuspense as DownloaderForm } from "@/components/downloader-form-suspense";
+import { JsonLd } from "@/components/json-ld";
 import { FaqSection, HowSection, PlatformSection } from "@/components/sections";
 import { getProviderSummary } from "@/lib/providers";
 import {
+  buildMetadata,
   jsonLdFaq,
   jsonLdOrganization,
   jsonLdWebApp,
+  jsonLdWebPage,
+  jsonLdWebsite,
   siteConfig,
 } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: siteConfig.name,
+  description: siteConfig.description,
+  path: "/",
+  keywords: [
+    "free online video downloader",
+    "save video from link",
+    "download social media videos",
+  ],
+});
 
 export default function HomePage() {
   const providers = getProviderSummary();
 
   return (
     <main id="main-content">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrganization()) }}
+      <JsonLd data={jsonLdOrganization()} />
+      <JsonLd data={jsonLdWebsite()} />
+      <JsonLd data={jsonLdWebApp()} />
+      <JsonLd
+        data={jsonLdWebPage({
+          title: siteConfig.name,
+          description: siteConfig.description,
+          path: "/",
+        })}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebApp()) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq()) }}
-      />
+      <JsonLd data={jsonLdFaq()} />
 
       <section className="hero">
         <h1 className="hero__brand">{siteConfig.name}</h1>
