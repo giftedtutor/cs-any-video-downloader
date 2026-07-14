@@ -30,8 +30,10 @@ export const siteViewport: Viewport = {
 };
 
 export function absoluteUrl(path = "/"): string {
-  if (!path.startsWith("/")) return `${siteConfig.url}/${path}`;
-  return `${siteConfig.url}${path}`;
+  const base = siteConfig.url.replace(/\/$/, "");
+  if (!path || path === "/") return base;
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${normalized.replace(/\/$/, "")}`;
 }
 
 function pageTitle(title: string, path: string): string {

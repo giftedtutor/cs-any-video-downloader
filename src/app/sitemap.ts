@@ -3,11 +3,11 @@ import { PLATFORMS } from "@/lib/platforms";
 import { absoluteUrl } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const lastModified = new Date();
 
   const platformRoutes = PLATFORMS.map((platform) => ({
     url: absoluteUrl(`/download/${platform.slug}`),
-    lastModified: now,
+    lastModified,
     changeFrequency: "weekly" as const,
     priority: 0.85,
   }));
@@ -20,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/cookies", priority: 0.45 },
   ].map((item) => ({
     url: absoluteUrl(item.path),
-    lastModified: now,
+    lastModified,
     changeFrequency: "monthly" as const,
     priority: item.priority,
   }));
@@ -28,7 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: absoluteUrl("/"),
-      lastModified: now,
+      lastModified,
       changeFrequency: "daily",
       priority: 1,
     },
