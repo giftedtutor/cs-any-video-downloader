@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Syne } from "next/font/google";
+import localFont from "next/font/local";
 import { AdSenseScript } from "@/components/adsense";
-import { CookieBanner } from "@/components/cookie-banner";
-import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { CookieBannerDeferred } from "@/components/cookie-banner-deferred";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import {
   buildMetadata,
   siteConfig,
@@ -10,18 +11,44 @@ import {
 } from "@/lib/seo";
 import "./globals.css";
 
-const syne = Syne({
+const syne = localFont({
+  src: [
+    {
+      path: "./fonts/syne-latin-700-normal.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "./fonts/syne-latin-800-normal.woff2",
+      weight: "800",
+      style: "normal",
+    },
+  ],
   variable: "--font-syne",
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
   display: "swap",
+  preload: true,
+  fallback: ["Arial Narrow", "Arial", "sans-serif"],
+  adjustFontFallback: "Arial",
 });
 
-const jakarta = Plus_Jakarta_Sans({
+const jakarta = localFont({
+  src: [
+    {
+      path: "./fonts/plus-jakarta-sans-latin-400-normal.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/plus-jakarta-sans-latin-600-normal.woff2",
+      weight: "600",
+      style: "normal",
+    },
+  ],
   variable: "--font-jakarta",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
+  preload: true,
+  fallback: ["Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+  adjustFontFallback: "Arial",
 });
 
 const base = buildMetadata({
@@ -36,7 +63,6 @@ export const metadata: Metadata = {
     default: `${siteConfig.name} — ${siteConfig.tagline}`,
     template: `%s | ${siteConfig.name}`,
   },
-  // Root layout should not force homepage canonical on child routes
   alternates: {
     ...base.alternates,
     canonical: undefined,
@@ -64,7 +90,7 @@ export default function RootLayout({
           <div className="shell shell--main">{children}</div>
           <SiteFooter />
         </div>
-        <CookieBanner />
+        <CookieBannerDeferred />
       </body>
     </html>
   );

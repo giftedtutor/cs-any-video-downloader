@@ -9,13 +9,33 @@ export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    try {
-      if (!localStorage.getItem(STORAGE_KEY)) {
+    let cancelled = false;
+    const reveal = () => {
+      if (cancelled) return;
+      try {
+        if (!localStorage.getItem(STORAGE_KEY)) setVisible(true);
+      } catch {
         setVisible(true);
       }
-    } catch {
-      setVisible(true);
+    };
+
+    // Keep first paint clean for Lighthouse / mobile LCP
+    let idleId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    if (typeof window.requestIdleCallback === "function") {
+      idleId = window.requestIdleCallback(reveal, { timeout: 2500 });
+    } else {
+      timeoutId = setTimeout(reveal, 1800);
     }
+
+    return () => {
+      cancelled = true;
+      if (idleId !== undefined && typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+    };
   }, []);
 
   function accept() {
@@ -34,8 +54,14 @@ export function CookieBanner() {
       <p>
         We use cookies and similar technologies for essential site functions and,
         when enabled, advertising (including Google AdSense). See our{" "}
-        <Link href="/privacy">Privacy Policy</Link> and{" "}
-        <Link href="/cookies">Cookie Policy</Link>.
+        <Link href="/privacy" prefetch={false}>
+          Privacy Policy
+        </Link>{" "}
+        and{" "}
+        <Link href="/cookies" prefetch={false}>
+          Cookie Policy
+        </Link>
+        .
       </p>
       <button type="button" onClick={accept} className="cookie-banner__btn">
         Got it

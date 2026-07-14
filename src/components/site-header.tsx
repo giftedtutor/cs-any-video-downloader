@@ -37,10 +37,18 @@ export function SiteHeader() {
           className="brand"
           aria-label={`${siteConfig.name} home`}
           onClick={() => setOpen(false)}
+          prefetch={false}
         >
           <span className="brand__mark" aria-hidden>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.svg" alt="" width={38} height={38} />
+            <img
+              src="/logo.svg"
+              alt=""
+              width={38}
+              height={38}
+              decoding="async"
+              fetchPriority="high"
+            />
           </span>
           <span className="brand__text">
             <span className="brand__name">CS Any Video</span>
@@ -50,11 +58,16 @@ export function SiteHeader() {
 
         <nav className="site-nav site-nav--desktop" aria-label="Primary">
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="site-nav__link">
+            <Link
+              key={link.href}
+              href={link.href}
+              className="site-nav__link"
+              prefetch={false}
+            >
               {link.label}
             </Link>
           ))}
-          <Link href="/contact" className="site-nav__cta">
+          <Link href="/contact" className="site-nav__cta" prefetch={false}>
             Contact
           </Link>
         </nav>
@@ -90,6 +103,7 @@ export function SiteHeader() {
                 key={link.href}
                 href={link.href}
                 className="site-nav__mobile-link"
+                prefetch={false}
                 onClick={() => setOpen(false)}
               >
                 {link.label}
@@ -97,10 +111,10 @@ export function SiteHeader() {
             ),
           )}
           <div className="site-nav__mobile-meta">
-            <Link href="/privacy" onClick={() => setOpen(false)}>
+            <Link href="/privacy" prefetch={false} onClick={() => setOpen(false)}>
               Privacy
             </Link>
-            <Link href="/terms" onClick={() => setOpen(false)}>
+            <Link href="/terms" prefetch={false} onClick={() => setOpen(false)}>
               Terms
             </Link>
             <a href={`mailto:${siteConfig.supportEmail}`}>Support</a>
@@ -108,67 +122,5 @@ export function SiteHeader() {
         </div>
       </nav>
     </header>
-  );
-}
-
-export function SiteFooter() {
-  const email = siteConfig.supportEmail;
-  const year = new Date().getFullYear();
-
-  return (
-    <footer className="site-footer">
-      <div className="site-footer__inner">
-        <div className="site-footer__grid">
-          <div className="site-footer__brand">
-            <div className="brand brand--footer">
-              <span className="brand__mark" aria-hidden>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.svg" alt="" width={40} height={40} />
-              </span>
-              <span className="brand__text">
-                <span className="brand__name">CS Any Video</span>
-                <span className="brand__sub">Downloader</span>
-              </span>
-            </div>
-            <p className="site-footer__tagline">
-              A free, mobile-ready tool for saving public videos from YouTube,
-              TikTok, Instagram, Facebook, X, and more — for personal use.
-            </p>
-          </div>
-
-          <nav className="site-footer__col" aria-label="Product">
-            <h2 className="site-footer__heading">Product</h2>
-            <Link href="/">Home</Link>
-            <Link href="/#platforms">Platforms</Link>
-            <Link href="/#how">How it works</Link>
-            <Link href="/download/youtube">YouTube</Link>
-            <Link href="/download/tiktok">TikTok</Link>
-          </nav>
-
-          <nav className="site-footer__col" aria-label="Company">
-            <h2 className="site-footer__heading">Company</h2>
-            <Link href="/about">About</Link>
-            <Link href="/contact">Contact</Link>
-            <a href={`mailto:${email}`}>Email support</a>
-          </nav>
-
-          <nav className="site-footer__col" aria-label="Legal">
-            <h2 className="site-footer__heading">Legal</h2>
-            <Link href="/privacy">Privacy Policy</Link>
-            <Link href="/terms">Terms of Service</Link>
-            <Link href="/cookies">Cookie Policy</Link>
-          </nav>
-        </div>
-
-        <div className="site-footer__bar">
-          <p>
-            © {year} {siteConfig.name}. All rights reserved.
-          </p>
-          <a className="site-footer__mail" href={`mailto:${email}`}>
-            {email}
-          </a>
-        </div>
-      </div>
-    </footer>
   );
 }

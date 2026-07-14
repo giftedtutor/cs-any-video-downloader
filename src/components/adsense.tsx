@@ -1,8 +1,8 @@
 import Script from "next/script";
 
 /**
- * Loads Google AdSense when NEXT_PUBLIC_ADSENSE_CLIENT is set (e.g. ca-pub-xxxxxxxx).
- * Place <AdSenseSlot /> where you want ad units after approval.
+ * Loads Google AdSense only when configured.
+ * Uses lazyOnload so it does not compete with LCP / TBT on mobile.
  */
 export function AdSenseScript() {
   const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
@@ -14,7 +14,7 @@ export function AdSenseScript() {
       async
       src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${client}`}
       crossOrigin="anonymous"
-      strategy="afterInteractive"
+      strategy="lazyOnload"
     />
   );
 }

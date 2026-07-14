@@ -56,12 +56,12 @@ body::before {
   pointer-events: none;
   position: fixed;
   inset: 0;
-  opacity: 0.35;
+  opacity: 0.2;
   background-image:
     linear-gradient(rgba(21, 32, 43, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(21, 32, 43, 0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(180deg, #000 0%, transparent 65%);
   z-index: 0;
 }
 
@@ -340,8 +340,8 @@ a {
 /* Hero */
 .hero {
   padding: 3.5rem 0 2.5rem;
-  animation: rise 0.85s 0.08s ease both;
 }
+
 
 .hero__lead {
   max-width: 34rem;
@@ -1190,7 +1190,18 @@ a {
 
 @media (max-width: 800px) {
   body {
-    background-attachment: scroll; /* better mobile performance */
+    background-attachment: scroll;
+  }
+
+  body::before {
+    display: none;
+  }
+
+  .providers,
+  .faq,
+  .site-footer {
+    content-visibility: auto;
+    contain-intrinsic-size: 800px;
   }
 }
 
