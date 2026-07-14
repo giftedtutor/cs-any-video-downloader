@@ -157,13 +157,15 @@ a {
   height: 2.35rem;
   flex-shrink: 0;
   border-radius: 0.7rem;
-  background: linear-gradient(145deg, #0f7a6c 0%, #0a5a50 100%);
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  overflow: hidden;
   box-shadow: 0 8px 20px rgba(15, 122, 108, 0.22);
+}
+
+.brand__mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .brand__text {
@@ -193,7 +195,6 @@ a {
 .brand--footer .brand__mark {
   width: 2.5rem;
   height: 2.5rem;
-  font-size: 0.82rem;
 }
 
 .brand--footer .brand__name {

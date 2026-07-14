@@ -128,7 +128,7 @@ export function jsonLdOrganization() {
     name: siteConfig.name,
     url: siteConfig.url,
     email: siteConfig.supportEmail,
-    logo: absoluteUrl("/icon"),
+    logo: absoluteUrl("/logo.svg"),
     contactPoint: {
       "@type": "ContactPoint",
       email: siteConfig.supportEmail,

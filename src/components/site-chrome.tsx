@@ -39,7 +39,8 @@ export function SiteHeader() {
           onClick={() => setOpen(false)}
         >
           <span className="brand__mark" aria-hidden>
-            CS
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="" width={38} height={38} />
           </span>
           <span className="brand__text">
             <span className="brand__name">CS Any Video</span>
@@ -121,7 +122,8 @@ export function SiteFooter() {
           <div className="site-footer__brand">
             <div className="brand brand--footer">
               <span className="brand__mark" aria-hidden>
-                CS
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.svg" alt="" width={40} height={40} />
               </span>
               <span className="brand__text">
                 <span className="brand__name">CS Any Video</span>

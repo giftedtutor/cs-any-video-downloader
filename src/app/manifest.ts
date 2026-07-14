@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl, siteConfig } from "@/lib/seo";
+import { siteConfig } from "@/lib/seo";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -14,8 +14,14 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["utilities", "entertainment"],
     icons: [
       {
-        src: absoluteUrl("/icon"),
-        sizes: "512x512",
+        src: "/logo.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "any",
+      },
+      {
+        src: "/apple-icon",
+        sizes: "180x180",
         type: "image/png",
         purpose: "any",
       },
